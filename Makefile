@@ -15,8 +15,7 @@ LIBRARY_DIR = $(SHARED_DIR)/library
 
 CC = gcc
 
-DEP_FLAGS = -MP -MD
-C_FLAGS = -Wall -Wextra -g $(foreach F,$(INCLUDE),-I$(F)) $(DEP_FLAGS)
+C_FLAGS = -Wall -Wextra -g $(foreach F,$(INCLUDE),-I$(F))
 
 RST = \033[0m
 CYAN = \033[36m
@@ -28,8 +27,6 @@ MAGENTA = \033[0;35m
 
 L_SOURCES = $(wildcard $(LIBRARY_DIR)/*.c)
 L_OBJECTS = $(patsubst %.c,%.o,$(L_SOURCES))
-
-DEPS = $(patsubst %.c,%.d,$(L_SOURCES))
 
 all: $(SHARED_DIR)/$(LIBRARY) $(BINARY)
 
@@ -47,7 +44,5 @@ $(SHARED_DIR)/%.o: $(SHARED_DIR)/%.c
 	@$(MAKE) -C $(SOLVER_DIR) $*
 
 re: fclean all
-
--include $(DEPS)
 
 .PHONY: all re
