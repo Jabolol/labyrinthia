@@ -14,8 +14,7 @@ LIBRARY = ../shared/libmy.a
 
 CC = gcc
 
-DEP_FLAGS = -MP -MD
-C_FLAGS = -Wall -Wextra -g $(foreach F,$(INCLUDE),-I$(F)) $(DEP_FLAGS)
+C_FLAGS = -Wall -Wextra -g $(foreach F,$(INCLUDE),-I$(F))
 COVERAGE = --coverage
 TEST_FLAGS = $(COVERAGE) -lcriterion
 TESTING_MACRO = -D__DANTE_TEST_MAIN
@@ -23,7 +22,6 @@ TESTING_MACRO = -D__DANTE_TEST_MAIN
 C_SOURCES = $(foreach C,$(SOURCES),$(wildcard $(C)/*.c))
 
 OBJECTS = $(patsubst %.c,%.o,$(C_SOURCES))
-DEPS = $(patsubst %.c,%.d,$(C_SOURCES))
 
 TEST_SOURCES = $(wildcard tests/*.c)
 TEST_OBJECTS = $(patsubst %.c,%.o,$(TEST_SOURCES))
@@ -74,7 +72,5 @@ $(TEST_BINARY): $(OBJECTS) $(TEST_OBJECTS) $(LIBRARY)
 
 visualize:
 	@gcovr --html --output=index.html
-
--include $(DEPS)
 
 .PHONY: all clean fclean re tests_run
