@@ -6,6 +6,7 @@
 */
 
 #include <errno.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -20,17 +21,18 @@
 
 #ifndef __DANTE_1
     #define __DANTE_1
+typedef struct {
+    int32_t x;
+    int32_t y;
+} coords_t;
 typedef struct node node_t;
 typedef struct node {
     bool walkable;
+    coords_t coords;
     struct {
-        int32_t x;
-        int32_t y;
-    } coords;
-    struct {
-        int32_t f;
-        int32_t g;
-        int32_t h;
+        double f;
+        double g;
+        double h;
     } costs;
     node_t *parent;
 } node_t;
