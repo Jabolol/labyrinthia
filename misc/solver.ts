@@ -1,6 +1,7 @@
 import {
   green,
-  red,
+  magenta,
+  dim,
 } from "https://deno.land/std@0.178.0/fmt/colors.ts";
 
 const data = new TextDecoder().decode(await Deno.readFile("./maze.txt"));
@@ -50,10 +51,6 @@ const getAdjacentNodes = (arr: Node[], { coords: { x, y } }: Node) =>
     [x, y + 1],
     [x - 1, y],
     [x + 1, y],
-    [x - 1, y - 1],
-    [x + 1, y - 1],
-    [x - 1, y + 1],
-    [x + 1, y + 1],
   ].map(([x, y]) =>
     arr.find((node) => node.coords.x === x && node.coords.y === y)
   ).filter((node) => node);
@@ -72,16 +69,29 @@ open.push(nodeArray[0]);
 const out = data.split("\n").map((l) => l.split(""));
 
 while (open.length > 0) {
-  const node = open.sort((a, b) => a.costs.f - b.costs.f).shift()!;
+  console.clear();
+  console.log(out.map((l) => l.join("")).join("\n").replaceAll("X", dim("X")));
+  const node = open.sort((a, b) => a.costs.h - b.costs.h).shift()!;
+  out[node.coords.y][node.coords.x] = magenta("*");
+  await (new Promise((r) => setTimeout(r, 1e3 / 15)));
   close.push(node);
 
   if (entries(target).every(([k, v]) => node.coords[k] === v)) {
     let current = node;
     while (current.parent) {
-      out[current.coords.y][current.coords.x] = "@";
+      out[current.coords.y][current.coords.x] = green("*");
+      console.clear();
+      console.log(
+        out.map((l) => l.join("")).join("\n").replaceAll("X", dim("X")),
+      );
+      await (new Promise((r) => setTimeout(r, 1e3 / 10)));
       current = current.parent;
     }
-    out[current.coords.y][current.coords.x] = "@";
+    console.clear();
+    out[current.coords.y][current.coords.x] = green("*");
+    console.log(
+      out.map((l) => l.join("")).join("\n").replaceAll("X", dim("X")),
+    );
     break;
   }
 
@@ -102,7 +112,3 @@ while (open.length > 0) {
       }
     });
 }
-
-console.log(data.replaceAll("@", green("@")).replaceAll("X", red("X")));
-console.log("-------");
-console.log(out.map((l) => l.join("")).join("\n").replaceAll("@", green("@")).replaceAll("X", red("X")));
