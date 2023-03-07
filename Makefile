@@ -28,10 +28,19 @@ MAGENTA = \033[0;35m
 L_SOURCES = $(wildcard $(LIBRARY_DIR)/*.c)
 L_OBJECTS = $(patsubst %.c,%.o,$(L_SOURCES))
 
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S), Darwin)
+    ECHO_OPTS :=
+else ifeq ($(UNAME_S), Linux)
+    ECHO_OPTS := -e
+else
+    $(error Unsupported operating system: $(UNAME_S))
+endif
+
 all: $(SHARED_DIR)/$(LIBRARY) $(BINARY)
 
 $(SHARED_DIR)/$(LIBRARY): $(L_OBJECTS)
-	@echo "- $(CYAN)Building library $(ORANGE)$(LIBRARY) $(CYAN)archive$(RST)"
+	@echo $(ECHO_OPTS) "- $(CYAN)Building library $(ORANGE)$(LIBRARY) $(CYAN)archive$(RST)"
 	@ar rc $@ $^
 	@rm -rf $(L_OBJECTS)
 
