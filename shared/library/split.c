@@ -19,7 +19,7 @@ char **split(char *const readonly_str, bool (*fn)(char c))
             delim_len += 1;
             *(string + i) = '\0';
         }
-    if (!(split_string = calloc(delim_len + 2, sizeof(char *))))
+    if (!(split_string = malloc(delim_len + 2 * sizeof(char *))))
         return NULL;
     for (int32_t i = 0; i < delim_len + 1; i++) {
         int32_t substr_len = strlen(string) + 1;
