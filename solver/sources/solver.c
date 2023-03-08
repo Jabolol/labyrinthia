@@ -10,8 +10,10 @@
 void solver_constructor(void *ptr, va_list __attribute__((unused)) * ap)
 {
     SolverClass *self = (SolverClass *) ptr;
-    self->open = new_class(Tree, self->size - self->offset);
-    self->close = new_class(Tree, self->size - self->offset);
+    if (!((self->adjacent = calloc(4, sizeof(node_t *))))) {
+        fprintf(stderr, "Failed calloc allocation\n");
+        exit(84);
+    }
 }
 
 void solver_destructor(void *ptr)
@@ -22,14 +24,15 @@ void solver_destructor(void *ptr)
     munmap(self->addr, self->size);
     free(self->pool);
     free(self->data);
+    free(self->adjacent);
 }
 
 void solver_load_path(SolverClass *self, char *path)
 {
-    int fd = open(path, O_RDONLY);
+    int32_t fd = open(path, O_RDONLY);
     if (fd < 0) {
         fprintf(stderr, "Couldn't open %s\n", path);
-        exit(EXIT_FAILURE);
+        exit(84);
     }
     self->size = lseek(fd, 0, SEEK_END);
     self->addr =
@@ -37,7 +40,7 @@ void solver_load_path(SolverClass *self, char *path)
     if (self->addr == MAP_FAILED) {
         close(fd);
         fprintf(stderr, "Failed mmap allocation\n");
-        exit(EXIT_FAILURE);
+        exit(84);
     }
     close(fd);
 }
@@ -46,11 +49,11 @@ void solver_load_nodes(SolverClass *self)
 {
     if (!((self->pool = calloc(self->size + 1, sizeof(node_t))))) {
         fprintf(stderr, "Failed calloc allocation\n");
-        exit(EXIT_FAILURE);
+        exit(84);
     }
     if (!((self->data = calloc(self->size + 1, sizeof(node_t *))))) {
         fprintf(stderr, "Failed calloc allocation\n");
-        exit(EXIT_FAILURE);
+        exit(84);
     }
     char *string = (char *) self->addr;
     self->columns = (strchr(string, '\n') - string);
@@ -74,32 +77,27 @@ void solver_load_nodes(SolverClass *self)
     self->offset = offset;
 }
 
-node_t **solver_get_adjacent(SolverClass *self, coords_t *coords)
+void solver_get_adjacent(SolverClass *self, coords_t *coords)
 {
-    node_t **neighbors = NULL;
+    int32_t rows = (self->size - self->offset) / self->columns;
+    int32_t cols = self->columns;
 
-    if (!((neighbors = calloc(4, sizeof(node_t *))))) {
-        return NULL;
-    }
     int32_t dx[4] = {0, -1, 0, 1};
     int32_t dy[4] = {-1, 0, 1, 0};
 
     for (int32_t i = 0; i < 4; i++) {
-        int32_t nx = coords->x + dx[i];
-        int32_t ny = coords->y + dy[i];
-        if ((ny * self->columns) + nx > 0
-            && (ny * self->columns) + nx < self->size - self->offset) {
-            *(neighbors + i) = *(self->data + (ny * self->columns) + nx);
-        } else {
-            *(neighbors + i) = NULL;
-        }
+        int32_t nx = coords->x + *(dx + i);
+        int32_t ny = coords->y + *(dy + i);
+        *(self->adjacent + i) = NULL;
+        if (ny >= 0 && ny < rows && nx >= 0 && nx < cols
+            && (ny == coords->y || nx == coords->x))
+            *(self->adjacent + i) = *(self->data + (ny * self->columns) + nx);
     }
-    return neighbors;
 }
 
 double solver_get_distance(coords_t *start, coords_t *end)
 {
-    return sqrt(pow(end->x - start->x, 2) + pow(end->y - start->y, 2));
+    return abs(start->x - end->x) + abs(start->y - end->y);
 }
 
 const SolverClass init_solver = {
@@ -112,6 +110,7 @@ const SolverClass init_solver = {
     .addr = NULL,
     .data = NULL,
     .pool = NULL,
+    .adjacent = NULL,
     .size = 0,
     .columns = 0,
     .offset = 0,
