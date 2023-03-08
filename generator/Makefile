@@ -51,7 +51,8 @@ $(PARENT): all
 all: $(BINARY)
 
 $(BINARY): $(OBJECTS)
-	@echo $(ECHO_OPTS) "- $(CYAN)Building $(ORANGE)$(BINARY) $(CYAN)binary$(RST)"
+	@echo $(ECHO_OPTS) "- $(CYAN)Building \
+	$(ORANGE)$(BINARY) $(CYAN)binary$(RST)"
 	@$(CC) -o $@ $^ -L../shared -lmy
 
 %.o: %.c
@@ -67,7 +68,8 @@ clean:
 	@rm -rf $(OBJECTS) $(DEPS) $(TEST_OBJECTS) $(CRITERION)
 
 fclean:
-	@echo $(ECHO_OPTS) "- $(PINK)Cleaning objects + deps + binary + library$(RST)"
+	@echo $(ECHO_OPTS) "- $(PINK)Cleaning objects + deps \
+	+ binary + library$(RST)"
 	@rm -rf $(BINARY) $(TEST_BINARY) $(OBJECTS) $(DEPS) \
 	$(TEST_OBJECTS) $(CRITERION) $(LIBRARY)
 
