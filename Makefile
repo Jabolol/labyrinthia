@@ -40,7 +40,8 @@ endif
 all: $(SHARED_DIR)/$(LIBRARY) $(BINARY)
 
 $(SHARED_DIR)/$(LIBRARY): $(L_OBJECTS)
-	@echo $(ECHO_OPTS) "- $(CYAN)Building library $(ORANGE)$(LIBRARY) $(CYAN)archive$(RST)"
+	@echo $(ECHO_OPTS) "- $(CYAN)Building library \
+	$(ORANGE)$(LIBRARY) $(CYAN)archive$(RST)"
 	@ar rc $@ $^
 	@rm -rf $(L_OBJECTS)
 
