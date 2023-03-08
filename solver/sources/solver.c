@@ -12,7 +12,7 @@ void solver_constructor(void *ptr, va_list __attribute__((unused)) * ap)
     SolverClass *self = (SolverClass *) ptr;
     if (!((self->adjacent = calloc(4, sizeof(node_t *))))) {
         fprintf(stderr, "Failed calloc allocation\n");
-        exit(84);
+        exit(EXIT_ERROR);
     }
 }
 
@@ -32,7 +32,7 @@ void solver_load_path(SolverClass *self, char *path)
     int32_t fd = open(path, O_RDONLY);
     if (fd < 0) {
         fprintf(stderr, "Couldn't open %s\n", path);
-        exit(84);
+        exit(EXIT_ERROR);
     }
     self->size = lseek(fd, 0, SEEK_END);
     self->addr =
@@ -40,21 +40,13 @@ void solver_load_path(SolverClass *self, char *path)
     if (self->addr == MAP_FAILED) {
         close(fd);
         fprintf(stderr, "Failed mmap allocation\n");
-        exit(84);
+        exit(EXIT_ERROR);
     }
     close(fd);
 }
 
-void solver_load_nodes(SolverClass *self)
+void solver_fill_nodes(SolverClass *self)
 {
-    if (!((self->pool = calloc(self->size + 1, sizeof(node_t))))) {
-        fprintf(stderr, "Failed calloc allocation\n");
-        exit(84);
-    }
-    if (!((self->data = calloc(self->size + 1, sizeof(node_t *))))) {
-        fprintf(stderr, "Failed calloc allocation\n");
-        exit(84);
-    }
     char *string = (char *) self->addr;
     self->columns = (strchr(string, '\n') - string);
     node_t *node = NULL;
@@ -77,27 +69,19 @@ void solver_load_nodes(SolverClass *self)
     self->offset = offset;
 }
 
-void solver_get_adjacent(SolverClass *self, coords_t *coords)
+void solver_load_nodes(SolverClass *self)
 {
-    int32_t rows = (self->size - self->offset) / self->columns;
-    int32_t cols = self->columns;
-
-    int32_t dx[4] = {0, -1, 0, 1};
-    int32_t dy[4] = {-1, 0, 1, 0};
-
-    for (int32_t i = 0; i < 4; i++) {
-        int32_t nx = coords->x + *(dx + i);
-        int32_t ny = coords->y + *(dy + i);
-        *(self->adjacent + i) = NULL;
-        if (ny >= 0 && ny < rows && nx >= 0 && nx < cols
-            && (ny == coords->y || nx == coords->x))
-            *(self->adjacent + i) = *(self->data + (ny * self->columns) + nx);
+    if (!((self->pool = calloc(self->size + 1, sizeof(node_t))))) {
+        fprintf(stderr, "Failed calloc allocation\n");
+        exit(EXIT_ERROR);
     }
-}
-
-double solver_get_distance(coords_t *start, coords_t *end)
-{
-    return abs(start->x - end->x) + abs(start->y - end->y);
+    if (!((self->data = calloc(self->size + 1, sizeof(node_t *))))) {
+        fprintf(stderr, "Failed calloc allocation\n");
+        exit(EXIT_ERROR);
+    }
+    self->fill_nodes(self);
+    self->open = new_class(Tree, self->size - self->offset);
+    self->close = new_class(Tree, self->size - self->offset);
 }
 
 const SolverClass init_solver = {
@@ -111,13 +95,19 @@ const SolverClass init_solver = {
     .data = NULL,
     .pool = NULL,
     .adjacent = NULL,
+    .smallest = NULL,
+    .target = NULL,
     .size = 0,
     .columns = 0,
     .offset = 0,
     .load_file = &solver_load_path,
     .load_nodes = &solver_load_nodes,
     .get_adjacent = &solver_get_adjacent,
-    .get_distance = &solver_get_distance,
+    .start_solver = &solver_start_solver,
+    .prune_adjacent = &solver_prune_adjacent,
+    .handle_valid_adjacent = &solver_handle_valid_adjacent,
+    .print_maze = &solver_print_maze,
+    .fill_nodes = &solver_fill_nodes,
 };
 
 const class_t *Solver = (const class_t *) &init_solver;
