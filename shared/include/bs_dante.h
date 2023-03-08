@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdnoreturn.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -21,6 +22,8 @@
 
 #ifndef __DANTE_1
     #define __DANTE_1
+    #define EXIT_ERROR            84
+    #define MANHATTAN(start, end) abs(start.x - end.x) + abs(start.y - end.y)
 typedef struct {
     int32_t x;
     int32_t y;
