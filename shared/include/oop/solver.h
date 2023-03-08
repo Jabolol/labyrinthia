@@ -29,12 +29,13 @@ typedef struct solver_aux {
     size_t columns;
     node_t *pool;
     node_t **data;
+    node_t **adjacent;
     TreeClass *open;
     TreeClass *close;
     /* Methods */
     void (*load_file)(SolverClass *, char *);
     void (*load_nodes)(SolverClass *);
-    node_t **(*get_adjacent)(SolverClass *, coords_t *);
+    void (*get_adjacent)(SolverClass *, coords_t *);
     double (*get_distance)(coords_t *, coords_t *);
 } SolverClass;
 extern const class_t *Solver;
