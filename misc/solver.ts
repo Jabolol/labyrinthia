@@ -4,7 +4,7 @@ import {
   dim,
 } from "https://deno.land/std@0.178.0/fmt/colors.ts";
 
-const data = new TextDecoder().decode(await Deno.readFile("./maze.txt"));
+const data = new TextDecoder().decode(await Deno.readFile(Deno.args[0]));
 
 type Node = {
   walkable: boolean;
