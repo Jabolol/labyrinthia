@@ -5,6 +5,7 @@
 ** dante solver header file
 */
 
+#include <assert.h>
 #include <fcntl.h>
 #include <math.h>
 #include <stdbool.h>
@@ -24,6 +25,7 @@ typedef struct solver_aux {
     class_t parent;
     /* Properties */
     void *addr;
+    bool error;
     size_t size;
     size_t offset;
     size_t columns;
@@ -42,12 +44,19 @@ typedef struct solver_aux {
     void (*fill_nodes)(SolverClass *);
     void (*prune_adjacent)(SolverClass *);
     void (*handle_valid_adjacent)(SolverClass *, node_t *);
-    int (*print_maze)(SolverClass *, leaf_t *, leaf_t *);
+    void (*print_maze)(SolverClass *, leaf_t *, leaf_t *);
+    void (*solve_maze)(SolverClass *);
+    bool (*is_valid)(SolverClass *);
 } SolverClass;
-void solver_start_solver(SolverClass *self, char *path);
-void solver_get_adjacent(SolverClass *self, coords_t *coords);
-void solver_prune_adjacent(SolverClass *self);
-void solver_handle_valid_adjacent(SolverClass *self, node_t *adjacent);
-int solver_print_maze(SolverClass *self, leaf_t *out, leaf_t *smallest);
+void solver_start_solver(SolverClass *, char *);
+void solver_get_adjacent(SolverClass *, coords_t *);
+void solver_prune_adjacent(SolverClass *);
+void solver_handle_valid_adjacent(SolverClass *, node_t *);
+void solver_print_maze(SolverClass *, leaf_t *, leaf_t *);
+void solver_solve_maze(SolverClass *);
+void solver_load_path(SolverClass *, char *);
+void solver_fill_nodes(SolverClass *);
+void solver_load_nodes(SolverClass *);
+bool solver_is_valid(SolverClass *);
 extern const class_t *Solver;
 #endif
