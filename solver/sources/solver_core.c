@@ -58,7 +58,7 @@ void solver_fill_nodes(SolverClass *self)
             node->walkable = *(string + i) == '*';
             node->costs.g = INT16_MAX;
             node->costs.h = INT16_MAX;
-            node->costs.f = node->costs.f + node->costs.g;
+            node->costs.f = node->costs.h + node->costs.g;
             node->coords.x = (i - offset) % self->columns;
             node->coords.y = (i - offset) / self->columns;
         });
