@@ -14,7 +14,7 @@ LIBRARY = ../shared/libmy.a
 
 CC = gcc
 
-C_FLAGS = -Wall -Wextra -g $(foreach F,$(INCLUDE),-I$(F))
+C_FLAGS = -Wall -Wextra $(foreach F,$(INCLUDE),-I$(F))
 COVERAGE = --coverage
 TEST_FLAGS = $(COVERAGE) -lcriterion
 TESTING_MACRO = -D__DANTE_TEST_MAIN
