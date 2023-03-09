@@ -63,7 +63,7 @@ void solver_handle_valid_adjacent(SolverClass *self, node_t *adjacent)
     }
 }
 
-noreturn int solver_print_maze(
+noreturn void solver_print_maze(
     SolverClass *self, leaf_t *out, leaf_t *smallest)
 {
     node_t *curr = smallest->node;
