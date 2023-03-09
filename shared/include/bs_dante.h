@@ -24,6 +24,16 @@
     #define __DANTE_1
     #define EXIT_ERROR            84
     #define MANHATTAN(start, end) abs(start.x - end.x) + abs(start.y - end.y)
+    #define ASSERT(x, s)                                                      \
+        ({                                                                    \
+            if (!((*s).error) && !(x)) {                                      \
+                fprintf(stderr,                                               \
+                    "Assertion failed: %s, function %s, file %s, line %d.\n", \
+                    #x, __func__, __FILE__, __LINE__);                        \
+                (*s).error = true;                                            \
+            }                                                                 \
+        })
+
 typedef struct {
     int32_t x;
     int32_t y;
