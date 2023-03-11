@@ -2,32 +2,6 @@
 
 Cell = Struct.new(:value, :visited, :coords)
 
-class Stack
-  attr_reader :data
-
-  def initialize
-    @data = []
-  end
-
-  def push(item)
-    @data.push(item)
-  end
-
-  def pop(count)
-    raise "Stack is empty" if empty?
-    @data.pop(count)
-  end
-
-  def peek
-    raise "Stack is empty" if empty?
-    @data.last
-  end
-
-  def empty?
-    @data.empty?
-  end
-end
-
 class MazeGenerator
   attr_reader :width, :height, :grid, :total
 
