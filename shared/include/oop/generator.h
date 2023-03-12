@@ -29,6 +29,7 @@ typedef struct generator_aux {
     size_t height;
     size_t total;
     cell_t ***grid;
+    cell_t *chunk;
     /* Methods */
     void (*get_neighbours)(GeneratorClass *, cell_t *, cell_t ***, int32_t *);
     void (*add_neighbour)(
