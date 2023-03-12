@@ -67,7 +67,12 @@ class MazeGenerator
   end
 end
 
-maze_generator = MazeGenerator.new(30, 20)
+if ARGV.length < 2
+  puts "Invalid usage: generator.rb <width> <height>"
+  exit 1
+end
+
+maze_generator = MazeGenerator.new(ARGV[0].to_i, ARGV[1].to_i)
 maze_generator.fill_maze
 maze_generator.generate
 maze_generator.print_maze
