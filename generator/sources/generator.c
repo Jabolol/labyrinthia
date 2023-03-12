@@ -16,11 +16,12 @@ void generator_constructor(void *ptr, va_list *args)
     self->total = self->width * self->height;
     self->stack = new_class(Stack, self->total);
     self->grid = malloc(self->height * sizeof(cell_t **));
+    self->chunk = malloc(self->width * self->height * sizeof(cell_t));
 
     for (size_t y = 0; y < self->height; y++) {
         self->grid[y] = malloc(self->width * sizeof(cell_t *));
         for (size_t x = 0; x < self->width; x++) {
-            self->grid[y][x] = malloc(sizeof(cell_t));
+            self->grid[y][x] = self->chunk + (y * self->width + x);
             self->grid[y][x]->value = 'X';
             self->grid[y][x]->visited = false;
             self->grid[y][x]->x = x;
@@ -34,12 +35,10 @@ void generator_destructor(void *ptr)
     GeneratorClass *self = (GeneratorClass *) ptr;
     destroy_class(self->stack);
     for (size_t y = 0; y < self->height; y++) {
-        for (size_t x = 0; x < self->width; x++) {
-            free(self->grid[y][x]);
-        }
         free(self->grid[y]);
     }
     free(self->grid);
+    free(self->chunk);
 }
 
 void generator_add_neighbour(
