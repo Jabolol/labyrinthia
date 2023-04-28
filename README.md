@@ -41,13 +41,13 @@ To solve a labyrinth, use the following command:
 
 # bonuses
 
-To visualize a labyrinth with TypeScript in the terminal run:
-
 To generate a labyrinth with Ruby run:
 
 ```sh
 ruby misc/generator.rb <width> <height> > maze.txt
 ```
+
+To visualize a labyrinth with TypeScript in the terminal run:
 
 ```sh
 deno run --allow-read=/path/to/maze.txt misc/solver.ts /path/to/maze.txt
