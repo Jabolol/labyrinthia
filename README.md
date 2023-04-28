@@ -31,7 +31,7 @@ To generate a labyrinth, use the following command:
 ./generator/generator <width> <height> [perfect] > /path/to/output.txt
 ```
 
-> Solvable mazes are not square, and do not contain a `\n` at the end
+> Solvable mazes are not a square, and do not contain a `\n` at the end
 
 To solve a labyrinth, use the following command:
 
